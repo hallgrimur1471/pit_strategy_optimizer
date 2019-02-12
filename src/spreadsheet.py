@@ -100,5 +100,11 @@ def _read_data(
     while (not data[i]) or data[i][0] != "average pit time [seconds]":
         i += 1
     extra_info["average_pit_time"] = int(data[i][1])
+    while (not data[i]) or data[i][0] != "max laps per tank":
+        i += 1
+    extra_info["max_laps_per_tank"] = int(data[i][1])
+    while (not data[i]) or data[i][0] != "laps in race":
+        i += 1
+    extra_info["laps_in_race"] = int(data[i][1])
 
     return (lap_times, extra_info)

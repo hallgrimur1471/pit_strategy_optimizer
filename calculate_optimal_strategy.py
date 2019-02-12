@@ -11,8 +11,10 @@ from src.optimizer import Solution
 
 def main():
     arguments = parse_command_line_arguments()
-    race_data = spreadsheet.read_data(arguments.RACEDATA)
-    optimal_solution = optimizer.calculate_optimal_pit_stop_strategy(race_data)
+    (lap_times, extra_info) = spreadsheet.read_data(arguments.RACEDATA)
+    optimal_solution = optimizer.calculate_optimal_pit_stop_strategy(
+        lap_times, extra_info
+    )
     print_solution(optimal_solution)
 
 
