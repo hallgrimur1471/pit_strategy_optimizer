@@ -44,8 +44,10 @@ def _gen_k_multicombinations(
 
 
 def test():
-    for solution in gen_k_multicombinations(list(range(1, 6)), 2):
-        print(solution)
+    print("gen_k_combinations([1,2,3], 2)")
+    print(gen_k_combinations([1, 2, 3], 2))
+    print("gen_k_multicombinations([1,2,3], 2)")
+    print(gen_k_multicombinations([1, 2, 3], 2))
 
 
 if __name__ == "__main__":
