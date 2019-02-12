@@ -32,7 +32,7 @@ def calculate_optimal_pit_stop_strategy(
 def _generate_possible_solutions(
     max_laps_per_tank: int, laps_in_race: int
 ) -> Generator[Solution, None, None]:
-    lap_list = list(range(1, laps_in_race + 1))
+    lap_list = list(range(1, laps_in_race))
     max_pit_stops = 5
 
     possible_solutions = []
@@ -42,6 +42,24 @@ def _generate_possible_solutions(
         ):
             possible_solutions.append(solution)
     print(f"len(possible_solutions): {len(possible_solutions)}")
+
+    # filter because of fuel limit
+    possible_solutions = list(
+        filter(
+            lambda solution: _does_not_run_out_of_fuel(
+                solution, max_laps_per_tank, laps_in_race
+            ),
+            possible_solutions,
+        )
+    )
+    print(f"len(possible_solutions): {len(possible_solutions)}")
+
+    # filter out pit stops that are ridiculously close together
+    possible_solutions = list(
+        filter(_pit_stops_not_ridiculously_close_together, possible_solutions)
+    )
+    print(f"len(possible_solutions): {len(possible_solutions)}")
+
     for solution in possible_solutions:
         yield solution
 
@@ -49,7 +67,7 @@ def _generate_possible_solutions(
 def _generate_solutions_with_num_pit_stops(
     laps_in_race: int, num_pit_stops: int
 ) -> List[Solution]:
-    lap_list = list(range(1, laps_in_race + 1))
+    lap_list = list(range(1, laps_in_race))
     pit_stop_laps_combinations = combinatorics.gen_k_combinations(
         lap_list, num_pit_stops
     )
@@ -68,8 +86,28 @@ def _generate_solutions_with_num_pit_stops(
     return solutions
 
 
-def does_not_run_out_of_fuel(pit_stop_solution):
-    pass
+def _does_not_run_out_of_fuel(solution, max_laps_per_tank, laps_in_race):
+    lap_diffs = _calculate_lap_diffs(solution.pit_stop_laps)
+    if max(lap_diffs) > max_laps_per_tank:
+        return False
+    return True
+    # if not lap_diffs:
+    #    return
+    # pass
+
+
+def _pit_stops_not_ridiculously_close_together(solution):
+    lap_diffs = _calculate_lap_diffs(solution.pit_stop_laps)
+    if min(lap_diffs) < 3:
+        return False
+    return True
+
+
+def _calculate_lap_diffs(pit_stop_laps):
+    v = pit_stop_laps
+    v = [0] + v
+    lap_diffs = [b - a for (a, b) in list(zip(v[::2], v[1::2]))]
+    return lap_diffs
 
 
 def _evaluate_solution(solution: Solution) -> int:
