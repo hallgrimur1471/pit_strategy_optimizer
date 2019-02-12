@@ -11,5 +11,8 @@
 .credentials.json
 .token.pickle
 
+# vim
+**/*.swp
+
 # user specific
 run-arnar
