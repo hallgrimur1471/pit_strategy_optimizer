@@ -6,3 +6,7 @@
 
 # virtualenv
 .virtualenv
+
+# Google Sheets API credentials
+.credentials.json
+.token.pickle
