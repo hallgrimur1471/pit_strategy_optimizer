@@ -10,3 +10,6 @@
 # Google Sheets API credentials
 .credentials.json
 .token.pickle
+
+# user specific
+run-arnar
