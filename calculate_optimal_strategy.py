@@ -38,7 +38,7 @@ def parse_command_line_arguments():
 
 
 def print_solution(solution):
-    print(f"print {solution} as a human readable text ...")  # TODO: implement
+    print(f"The best found solution is: {solution}")
 
 
 if __name__ == "__main__":

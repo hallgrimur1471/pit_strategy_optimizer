@@ -16,6 +16,18 @@ class Solution:
     pit_stop_laps: List[int]
     pit_tyre_choices: List[str]
 
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        s = "Solution:"
+        for lap_index, lap in enumerate(self.pit_stop_laps):
+            s = (
+                s
+                + f" On lap nr. {self.pit_stop_laps[lap_index]} stop and use tyre type: {self.pit_tyre_choices[lap_index]}."
+            )
+        return s
+
 
 def calculate_optimal_pit_stop_strategy(
     laptimes: Dict[str, timedelta], extra_info: Dict[str, Any]
@@ -28,9 +40,10 @@ def calculate_optimal_pit_stop_strategy(
     print("Evaluating solutions ...")
     start_time = time()
     scores = map(_evaluate_solution, possible_solutions)
+
     pairs = zip(possible_solutions, scores)
     best_score = min(pairs, key=lambda p: p[1])
-    print("Ealuating solutions took approx: {0:f} [s]".format(time() - start_time));
+    print("Ealuating solutions took approx: {0:f} [s]".format(time() - start_time))
     return best_score
 
 
@@ -46,6 +59,7 @@ def _generate_possible_solutions(
             laps_in_race, num_pit_stops
         ):
             possible_solutions.append(solution)
+
     print(f"len(possible_solutions): {len(possible_solutions)}")
 
     # filter because of fuel limit
@@ -83,10 +97,7 @@ def _generate_solutions_with_num_pit_stops(
         )
         for pit_tyre_choices in pit_tyre_choices_combinations:
             solutions.append(
-                Solution(
-                    pit_stop_laps=pit_stop_laps,
-                    pit_tyre_choices=pit_tyre_choices,
-                )
+                Solution(pit_stop_laps=pit_stop_laps, pit_tyre_choices=pit_tyre_choices)
             )
     return solutions
 
