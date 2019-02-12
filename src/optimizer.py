@@ -4,6 +4,8 @@
 from datetime import timedelta
 from typing import Generator, Tuple, Dict, List, Any
 from dataclasses import dataclass
+from time import time
+from time import sleep
 
 # This project
 import src.combinatorics as combinatorics
@@ -24,16 +26,19 @@ def calculate_optimal_pit_stop_strategy(
     )
     # print(f"len(possible_solutions): {len([x for x in possible_solutions])}")
     print("Evaluating solutions ...")
+    start_time = time()
     scores = map(_evaluate_solution, possible_solutions)
     pairs = zip(possible_solutions, scores)
-    return max(pairs, key=lambda p: p[1])
+    best_score = min(pairs, key=lambda p: p[1])
+    print("Ealuating solutions took approx: {0:f} [s]".format(time() - start_time));
+    return best_score
 
 
 def _generate_possible_solutions(
     max_laps_per_tank: int, laps_in_race: int
 ) -> Generator[Solution, None, None]:
     lap_list = list(range(1, laps_in_race))
-    max_pit_stops = 5
+    max_pit_stops = 4
 
     possible_solutions = []
     for num_pit_stops in range(0, max_pit_stops + 1):
