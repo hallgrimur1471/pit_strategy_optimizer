@@ -7,6 +7,7 @@ from datetime import timedelta
 from typing import Dict, Tuple, List, Any
 import os.path
 from os.path import dirname, abspath, join
+from time import time
 
 # PyPi
 from googleapiclient.discovery import build as google_service_build
@@ -28,7 +29,8 @@ def _authenticate_user():
     token_file = join(project_dir, ".token.pickle")
     credentials_file = join(project_dir, ".credentials.json")
 
-    print("Authenticating user ...")
+    print("Authenticating user ...", end="")
+    start_time = time()
     credentials = None
     # The file .token.pickle stores the user's access and refresh tokens, and
     # is created automatically when the authorization flow completes for the
@@ -47,6 +49,8 @@ def _authenticate_user():
         # Save the credentials for the next run
         with open(token_file, "wb") as token:
             pickle.dump(credentials, token)
+    authentication_time = time() - start_time
+    print(f" done in {authentication_time} seconds")
     return credentials
 
 
@@ -62,7 +66,8 @@ def _read_data(
     spreadsheet_id: str, credentials: Credentials
 ) -> Tuple[Dict[str, List[timedelta]], Dict[str, Any]]:
 
-    print(f"Reading data from spreadsheet ...")
+    print(f"Reading data from spreadsheet ...", end="")
+    start_time = time();
 
     service = google_service_build("sheets", "v4", credentials=credentials)
     sheet = service.spreadsheets()
@@ -98,5 +103,8 @@ def _read_data(
     while (not data[i]) or data[i][0] != "laps in race":
         i += 1
     extra_info["laps_in_race"] = int(data[i][1])
+    
+    reading_time = time() - start_time
+    print(f" done in {reading_time} seconds")
 
     return (lap_times, extra_info)
