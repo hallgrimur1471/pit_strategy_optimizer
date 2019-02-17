@@ -56,26 +56,30 @@ def calculate_optimal_pit_stop_strategy(
     #test solutions
     test1 = Solution(pit_stop_laps= [5, 10, 20, 27], pit_tyre_choices= ['RH', 'RH', 'RS', 'RM'])
     test1score = _evaluate_solution(test1, laps_in_race, average_pit_stop_time, laptimes)
-    return (test1, test1score)
+    #return (test1, test1score)
 
+    start_time = time()
     possible_solutions = _generate_possible_solutions(
         extra_info["max_laps_per_tank"], laps_in_race
     )
-    possible_solutions = [next(possible_solutions)]
+    possible_solutions = [possible_solutions[0]]
     # print(f"len(possible_solutions): {len([x for x in possible_solutions])}")
+    generation_time = time() - start_time
+    print(f"Generating possible solutions ... done in {generation_time} seconds")
     print("Evaluating solutions ...")
     start_time = time()
     scores = map(lambda s: _evaluate_solution(s, laps_in_race, laptimes, average_pit_stop_time), possible_solutions)
 
     pairs = zip(possible_solutions, scores)
     best_score = min(pairs, key=lambda p: p[1])
-    print("Ealuating solutions took approx: {0:f} [s]".format(time() - start_time))
+    evaluation_time = time() - start_time
+    print(f"Evaluating solutions ... done in {evaluation_time} seconds")
     return best_score
 
 
 def _generate_possible_solutions(
     max_laps_per_tank: int, laps_in_race: int
-) -> Generator[Solution, None, None]:
+) -> List[Solution]:
     lap_list = list(range(1, laps_in_race))
     max_pit_stops = 4
 
@@ -86,7 +90,7 @@ def _generate_possible_solutions(
         ):
             possible_solutions.append(solution)
 
-    print(f"len(possible_solutions): {len(possible_solutions)}")
+    number_of_possible_solutions = len(possible_solutions)
 
     # filter because of fuel limit
     possible_solutions = list(
@@ -97,16 +101,17 @@ def _generate_possible_solutions(
             possible_solutions,
         )
     )
-    print(f"len(possible_solutions): {len(possible_solutions)}")
 
     # filter out pit stops that are ridiculously close together
     possible_solutions = list(
         filter(_pit_stops_not_ridiculously_close_together, possible_solutions)
     )
     print(f"len(possible_solutions): {len(possible_solutions)}")
+    number_of_possible_solutions_after_filtering = len(possible_solutions)
+    number_of_filtered_solutions = number_of_possible_solutions - number_of_possible_solutions_after_filtering
+    print(f"{number_of_possible_solutions} possible solutions remain after filtering {number_of_filtered_solutions} out")
 
-    for solution in possible_solutions:
-        yield solution
+    return possible_solutions
 
 
 def _generate_solutions_with_num_pit_stops(
@@ -133,9 +138,6 @@ def _does_not_run_out_of_fuel(solution, max_laps_per_tank, laps_in_race):
     if max(lap_diffs) > max_laps_per_tank:
         return False
     return True
-    # if not lap_diffs:
-    #    return
-    # pass
 
 
 def _pit_stops_not_ridiculously_close_together(solution):
@@ -152,6 +154,8 @@ def _calculate_lap_diffs(pit_stop_laps):
     return lap_diffs
 
 def _get_time(laps_on_tyres, tyre_type, laptimes):
+    print("####")
+    print(laptimes)
     print(tyre_type+'c', laptimes[tyre_type + 'c'])
     print(laptimes[tyre_type + 'c'][laps_on_tyres])
     time = laptimes[tyre_type + 'c'][laps_on_tyres]
