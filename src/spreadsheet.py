@@ -67,7 +67,7 @@ def _read_data(
 ) -> Tuple[Dict[str, List[timedelta]], Dict[str, Any]]:
 
     print(f"Reading data from spreadsheet ...", end="")
-    start_time = time();
+    start_time = time()
 
     service = google_service_build("sheets", "v4", credentials=credentials)
     sheet = service.spreadsheets()
@@ -103,7 +103,7 @@ def _read_data(
     while (not data[i]) or data[i][0] != "laps in race":
         i += 1
     extra_info["laps_in_race"] = int(data[i][1])
-    
+
     reading_time = time() - start_time
     print(f" done in {reading_time} seconds")
 
