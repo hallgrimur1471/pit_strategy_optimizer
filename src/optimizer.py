@@ -6,6 +6,7 @@ from typing import Generator, Tuple, Dict, List, Any
 from dataclasses import dataclass
 from time import time
 from time import sleep
+from math import inf
 
 # This project
 import src.combinatorics as combinatorics
@@ -44,45 +45,47 @@ def _add_cumulative_to_laptimes(laptimes):
 
 def calculate_optimal_pit_stop_strategy(
     laptimes: Dict[str, timedelta], extra_info: Dict[str, Any]
-) -> Tuple[Solution, int]:
+) -> Tuple[Solution, float]:
     _add_cumulative_to_laptimes(laptimes)
-    print("extra info")
-    print(extra_info)
-    print("laptimes")
-    print(laptimes)
-    print("Generating possible solutions ...")
+    # print("extra info")
+    # print(extra_info)
+    # print("laptimes")
+    # print(laptimes)
+    # print("Generating possible solutions ...")
 
     laps_in_race = extra_info["laps_in_race"]
     average_pit_stop_time = extra_info["average_pit_time"]
 
-    # test solutions
-    test1 = Solution(
-        pit_stop_laps=[5, 10, 20, 27], pit_tyre_choices=["RH", "RH", "RS", "RM"]
-    )
-    test1score = _evaluate_solution(
-        test1, laps_in_race, average_pit_stop_time, laptimes
-    )
-    return (test1, test1score)
+    # TODO: test this with pytest
+    # # test solutions
+    # test1 = Solution(
+    #    pit_stop_laps=[5, 10, 20, 27],
+    #    pit_tyre_choices=["RH", "RH", "RS", "RM"],
+    # )
+    # test1score = _evaluate_solution(
+    #    test1, laps_in_race, average_pit_stop_time, laptimes
+    # )
+    # return (test1, test1score)
 
     possible_solutions = _generate_possible_solutions(
         extra_info["max_laps_per_tank"], laps_in_race
     )
-    possible_solutions = [next(possible_solutions)]
+    # possible_solutions = [next(possible_solutions)]
     # print(f"len(possible_solutions): {len([x for x in possible_solutions])}")
-    print("Evaluating solutions ...")
+    # print("Evaluating solutions ...")
     start_time = time()
     scores = map(
         lambda s: _evaluate_solution(
-            s, laps_in_race, laptimes, average_pit_stop_time
+            s, laps_in_race, average_pit_stop_time, laptimes
         ),
         possible_solutions,
     )
 
     pairs = zip(possible_solutions, scores)
     best_score = min(pairs, key=lambda p: p[1])
-    print(
-        "Ealuating solutions took approx: {0:f} [s]".format(time() - start_time)
-    )
+    # print(
+    #    "Ealuating solutions took approx: {0:f} [s]".format(time() - start_time)
+    # )
     return best_score
 
 
@@ -90,7 +93,7 @@ def _generate_possible_solutions(
     max_laps_per_tank: int, laps_in_race: int
 ) -> Generator[Solution, None, None]:
     lap_list = list(range(1, laps_in_race))
-    max_pit_stops = 4
+    max_pit_stops = 5
 
     possible_solutions = []
     for num_pit_stops in range(0, max_pit_stops + 1):
@@ -99,8 +102,13 @@ def _generate_possible_solutions(
         ):
             possible_solutions.append(solution)
 
-    print(f"len(possible_solutions): {len(possible_solutions)}")
+    # print(f"len(possible_solutions): {len(possible_solutions)}")
 
+    # s = Solution(pit_stop_laps=[3], pit_tyre_choices=["RM"])
+    # print(
+    #    f"does not run out of fuel: "
+    #    f"{_does_not_run_out_of_fuel(solution, max_laps_per_tank, laps_in_race)}"
+    # )
     # filter because of fuel limit
     possible_solutions = list(
         filter(
@@ -110,13 +118,18 @@ def _generate_possible_solutions(
             possible_solutions,
         )
     )
-    print(f"len(possible_solutions): {len(possible_solutions)}")
+    # print(f"len(possible_solutions): {len(possible_solutions)}")
 
     # filter out pit stops that are ridiculously close together
     possible_solutions = list(
-        filter(_pit_stops_not_ridiculously_close_together, possible_solutions)
+        filter(
+            lambda solution: _pit_stops_not_ridiculously_close_together(
+                solution, laps_in_race
+            ),
+            possible_solutions,
+        )
     )
-    print(f"len(possible_solutions): {len(possible_solutions)}")
+    # print(f"len(possible_solutions): {len(possible_solutions)}")
 
     for solution in possible_solutions:
         yield solution
@@ -145,7 +158,7 @@ def _generate_solutions_with_num_pit_stops(
 
 
 def _does_not_run_out_of_fuel(solution, max_laps_per_tank, laps_in_race):
-    lap_diffs = _calculate_lap_diffs(solution.pit_stop_laps)
+    lap_diffs = _calculate_lap_diffs(solution.pit_stop_laps, laps_in_race)
     if max(lap_diffs) > max_laps_per_tank:
         return False
     return True
@@ -154,25 +167,30 @@ def _does_not_run_out_of_fuel(solution, max_laps_per_tank, laps_in_race):
     # pass
 
 
-def _pit_stops_not_ridiculously_close_together(solution):
-    lap_diffs = _calculate_lap_diffs(solution.pit_stop_laps)
+def _pit_stops_not_ridiculously_close_together(solution, laps_in_race):
+    lap_diffs = _calculate_lap_diffs(solution.pit_stop_laps, laps_in_race)
     if min(lap_diffs) < 3:
         return False
     return True
 
 
-def _calculate_lap_diffs(pit_stop_laps):
+def _calculate_lap_diffs(pit_stop_laps, laps_in_race):
     v = pit_stop_laps
-    v = [0] + v
-    lap_diffs = [b - a for (a, b) in list(zip(v[::2], v[1::2]))]
+    v = [0] + v + [laps_in_race]
+    lap_diffs = []
+    for i in range(len(v)):
+        if i > 0:
+            lap_diffs.append(v[i] - v[i - 1])
+    # lap_diffs = [b - a for (a, b) in list(zip(v[::2], v[1::2]))]
     return lap_diffs
 
 
 def _get_time(laps_on_tyres, tyre_type, laptimes):
-    print(tyre_type + "c", laptimes[tyre_type + "c"])
-    print(laptimes[tyre_type + "c"][laps_on_tyres])
-    time = laptimes[tyre_type + "c"][laps_on_tyres]
-    print(f"{laps_on_tyres} laps on {tyre_type} take {time} seconds")
+    # print(f"laps_on_tyres: {laps_on_tyres}")
+    # print(tyre_type + "c", laptimes[tyre_type + "c"])
+    # print(laptimes[tyre_type + "c"][laps_on_tyres - 1])
+    time = laptimes[tyre_type + "c"][laps_on_tyres - 1]
+    # print(f"{laps_on_tyres} laps on {tyre_type} take {time} seconds")
     return time
 
 
@@ -181,32 +199,32 @@ def _evaluate_solution(
     laps_in_race: int,
     average_pit_stop_time: float,
     laptimes: Any,
-) -> int:
-    solution.pit_stop_laps.append(laps_in_race + 1)
+) -> float:
+    solution.pit_stop_laps.append(laps_in_race)
     solution.pit_tyre_choices.append("End")
-    time = 0
-    last_tyre_type = "RH"
+    time = 0.0
+    last_tyre_type = "RS"
+    average_pit_stop_time = 40
     last_lap = 0
 
-    print(f"evaluating solution: {solution}")
-    print(f"laps_in_race: {laps_in_race}")
-    print(f"average_pit_stop_time: {average_pit_stop_time}")
+    # print(f"evaluating solution: {solution}")
+    # print(f"laps_in_race: {laps_in_race}")
+    # print(f"average_pit_stop_time: {average_pit_stop_time}")
 
     for lap, tyre_type in zip(
         solution.pit_stop_laps, solution.pit_tyre_choices
     ):
         laps_on_tyres = lap - last_lap
-        time += (
-            _get_time(laps_on_tyres, last_tyre_type, laptimes)
-            + average_pit_stop_time
-        )
+        time += _get_time(laps_on_tyres, last_tyre_type, laptimes)
+        if not ((lap == laps_in_race) and (tyre_type == "End")):
+            time += average_pit_stop_time
         last_lap = lap
         last_tyre_type = tyre_type
-        print("lap", lap, "tyre_type", tyre_type, f"time so far: {time}")
+        # print("lap", lap, "tyre_type", tyre_type, f"time so far: {time:.3f}")
 
     solution.pit_stop_laps.pop()
     solution.pit_tyre_choices.pop()
 
-    print(f"total time for solution: {time} seconds")
+    # print(f"total time for solution: {time} seconds")
 
     return time

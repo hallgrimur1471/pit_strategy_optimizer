@@ -28,7 +28,7 @@ def _authenticate_user():
     token_file = join(project_dir, ".token.pickle")
     credentials_file = join(project_dir, ".credentials.json")
 
-    print("Authenticating user ...")
+    # print("Authenticating user ...")
     credentials = None
     # The file .token.pickle stores the user's access and refresh tokens, and
     # is created automatically when the authorization flow completes for the
@@ -42,7 +42,9 @@ def _authenticate_user():
             credentials.refresh(Request())
         else:
             scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
-            flow = InstalledAppFlow.from_client_secrets_file(credentials_file, scopes)
+            flow = InstalledAppFlow.from_client_secrets_file(
+                credentials_file, scopes
+            )
             credentials = flow.run_local_server()
         # Save the credentials for the next run
         with open(token_file, "wb") as token:
@@ -62,17 +64,23 @@ def _read_data(
     spreadsheet_id: str, credentials: Credentials
 ) -> Tuple[Dict[str, List[timedelta]], Dict[str, Any]]:
 
-    print(f"Reading data from spreadsheet ...")
+    # print(f"Reading data from spreadsheet ...")
 
     service = google_service_build("sheets", "v4", credentials=credentials)
     sheet = service.spreadsheets()
     data_range = "A1:G"
     result = (
-        sheet.values().get(spreadsheetId=spreadsheet_id, range=data_range).execute()
+        sheet.values()
+        .get(spreadsheetId=spreadsheet_id, range=data_range)
+        .execute()
     )
     data = result.get("values", [])
 
-    lap_times = {"RH": [], "RM": [], "RS": []}  # type: Dict[str, List[timedelta]]
+    lap_times = {
+        "RH": [],
+        "RM": [],
+        "RS": [],
+    }  # type: Dict[str, List[timedelta]]
     i = 0
     while data[i] != ["Lap", "RH", "", "RM", "", "RS"]:
         i += 1

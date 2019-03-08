@@ -1,0 +1,36 @@
+TYRES: RH, PIT_TIME: 15
+The best found solution is: (Solution: On lap nr. 6 stop and use tyre type: RS. On lap nr. 13 stop and use tyre type: RS. On lap nr. 21 stop and use tyre type: RM., 3739.8999999999996)
+TYRES: RM, PIT_TIME: 15
+The best found solution is: (Solution: On lap nr. 6 stop and use tyre type: RS. On lap nr. 13 stop and use tyre type: RS. On lap nr. 21 stop and use tyre type: RM., 3730.5999999999995)
+TYRES: RS, PIT_TIME: 15
+The best found solution is: (Solution: On lap nr. 7 stop and use tyre type: RS. On lap nr. 14 stop and use tyre type: RS. On lap nr. 21 stop and use tyre type: RM., 3725.3999999999996)
+TYRES: RH, PIT_TIME: 20
+The best found solution is: (Solution: On lap nr. 11 stop and use tyre type: RS. On lap nr. 20 stop and use tyre type: RM., 3753.1000000000004)
+TYRES: RM, PIT_TIME: 20
+The best found solution is: (Solution: On lap nr. 11 stop and use tyre type: RS. On lap nr. 20 stop and use tyre type: RM., 3744.1000000000004)
+TYRES: RS, PIT_TIME: 20
+The best found solution is: (Solution: On lap nr. 9 stop and use tyre type: RS. On lap nr. 19 stop and use tyre type: RM., 3738.7)
+TYRES: RH, PIT_TIME: 25
+The best found solution is: (Solution: On lap nr. 11 stop and use tyre type: RS. On lap nr. 20 stop and use tyre type: RM., 3763.1000000000004)
+TYRES: RM, PIT_TIME: 25
+The best found solution is: (Solution: On lap nr. 11 stop and use tyre type: RS. On lap nr. 20 stop and use tyre type: RM., 3754.1000000000004)
+TYRES: RS, PIT_TIME: 25
+The best found solution is: (Solution: On lap nr. 9 stop and use tyre type: RS. On lap nr. 19 stop and use tyre type: RM., 3748.7)
+TYRES: RH, PIT_TIME: 30
+The best found solution is: (Solution: On lap nr. 11 stop and use tyre type: RS. On lap nr. 20 stop and use tyre type: RM., 3773.1000000000004)
+TYRES: RM, PIT_TIME: 30
+The best found solution is: (Solution: On lap nr. 11 stop and use tyre type: RS. On lap nr. 20 stop and use tyre type: RM., 3764.1000000000004)
+TYRES: RS, PIT_TIME: 30
+The best found solution is: (Solution: On lap nr. 9 stop and use tyre type: RS. On lap nr. 19 stop and use tyre type: RM., 3758.7)
+TYRES: RH, PIT_TIME: 35
+The best found solution is: (Solution: On lap nr. 15 stop and use tyre type: RM., 3783.1)
+TYRES: RM, PIT_TIME: 35
+The best found solution is: (Solution: On lap nr. 11 stop and use tyre type: RS. On lap nr. 20 stop and use tyre type: RM., 3774.1000000000004)
+TYRES: RS, PIT_TIME: 35
+The best found solution is: (Solution: On lap nr. 9 stop and use tyre type: RS. On lap nr. 19 stop and use tyre type: RM., 3768.7)
+TYRES: RH, PIT_TIME: 40
+The best found solution is: (Solution: On lap nr. 15 stop and use tyre type: RM., 3788.1)
+TYRES: RM, PIT_TIME: 40
+The best found solution is: (Solution: On lap nr. 14 stop and use tyre type: RH., 3783.0)
+TYRES: RS, PIT_TIME: 40
+The best found solution is: (Solution: On lap nr. 9 stop and use tyre type: RS. On lap nr. 19 stop and use tyre type: RM., 3778.7)
